@@ -27,17 +27,18 @@ export const Header = () => {
         <ClerkLoaded>
           <SignedIn>
             {/* afterSignOurUrl is deprecated... i need to refix code */}
-            <UserButton afterSignOutUrl='/' />
+            <UserButton />
           </SignedIn>
           <SignedOut>
             <SignInButton
               mode='modal'
               fallbackRedirectUrl='/learn'
               signUpFallbackRedirectUrl='/learn'
-            />
-            <Button size='lg' variant='ghost'>
-              Login
-            </Button>
+            >
+              <Button size='lg' variant='ghost'>
+                Login
+              </Button>
+            </SignInButton>
           </SignedOut>
         </ClerkLoaded>
       </div>
