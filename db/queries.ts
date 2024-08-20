@@ -2,7 +2,7 @@ import { cache } from 'react'
 import db from './drizzle'
 import { auth } from '@clerk/nextjs/server'
 import { eq } from 'drizzle-orm'
-import { courses, userProgress } from './schema'
+import { courses, units, userProgress } from './schema'
 
 export const getCourses = cache(async () => {
   const data = await db.query.courses.findMany()
@@ -29,4 +29,40 @@ export const getCourseById = cache(async (courseId: number) => {
     // TODO: Populate units and lessons
   })
   return data
+})
+
+export const getUnits = cache(async () => {
+  const userProgress = await getUserProgress()
+  if (!userProgress?.activeId) {
+    return []
+  }
+  const data = await db.query.units.findMany({
+    where: eq(units.courseId, userProgress.activeId),
+    with: {
+      lessons: {
+        with: {
+          challenges: {
+            with: {
+              challengeProgress: true,
+            },
+          },
+        },
+      },
+    },
+  })
+
+  const normalizedData = data.map((unit) => {
+    const lessonsWithStatusCompleted = unit.lessons.map((lesson) => {
+      const completedChallenges = lesson.challenges.every((challenge) => {
+        return (
+          challenge.challengeProgress &&
+          challenge.challengeProgress.length > 0 &&
+          challenge.challengeProgress.every((progress) => progress.completed)
+        )
+      })
+      return { ...lesson, completed: completedChallenges }
+    })
+    return { ...unit, lessons: lessonsWithStatusCompleted }
+  })
+  return normalizedData
 })
