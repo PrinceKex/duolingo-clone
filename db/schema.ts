@@ -34,7 +34,7 @@ export const unitsRelations = relations(units, ({ many, one }) => ({
     fields: [units.courseId],
     references: [courses.id],
   }),
-  lesson: many(lessons),
+  lessons: many(lessons),
 }))
 
 export const lessons = pgTable('lessons', {
@@ -85,7 +85,7 @@ export const challengesRelations = relations(challenges, ({ one, many }) => ({
 //   challengeOptions: many(challengeOptions),
 // }))
 
-export const challengeOptions = pgTable('challengeOptions', {
+export const challengeOptions = pgTable('challenge_options', {
   id: serial('id').primaryKey(),
   challengeId: integer('challenge_id')
     .references(() => challenges.id, {
@@ -95,7 +95,7 @@ export const challengeOptions = pgTable('challengeOptions', {
   text: text('text').notNull(),
   correct: boolean('correct').notNull(),
   imageSrc: text('image_src'),
-  audioSrc: text('image_src'),
+  audioSrc: text('audio_src'),
 })
 
 export const challengeOptionRelations = relations(
@@ -108,7 +108,7 @@ export const challengeOptionRelations = relations(
   })
 )
 
-export const challengeProgress = pgTable('challengeProgress', {
+export const challengeProgress = pgTable('challenge_progress', {
   id: serial('id').primaryKey(),
   userId: text('user_id').notNull(), //Confirm it doesnt break
   challengeId: integer('challenge_id')
