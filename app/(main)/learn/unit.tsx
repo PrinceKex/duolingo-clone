@@ -1,4 +1,4 @@
-import { lessons, units } from '@/db/schema'
+import { challenges, lessons, units } from '@/db/schema'
 import { UnitBanner } from './unit-banner'
 import LessonButton from './lesson-button'
 
@@ -10,7 +10,7 @@ type Props = {
   lessons: (typeof lessons.$inferSelect & { completed: boolean })[]
   activeLesson:
     | (typeof lessons.$inferSelect & {
-        unit: typeof units.$inferSelect
+        unit: typeof units.$inferSelect | null
       })
     | undefined
   activeLessonPerc: number
