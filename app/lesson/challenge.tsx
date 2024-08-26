@@ -10,7 +10,7 @@ type Props = {
   disabled?: boolean
   type: (typeof challenges.$inferSelect)['type']
 }
-const Challenge = ({
+export const Challenge = ({
   options,
   onSelect,
   status,
@@ -45,5 +45,3 @@ const Challenge = ({
     </div>
   )
 }
-
-export default Challenge
