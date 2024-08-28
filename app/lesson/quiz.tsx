@@ -10,10 +10,12 @@ import { Footer } from './footer'
 import { upsertChallengeProgress } from '@/actions/challenge-progress'
 import { toast } from 'sonner'
 import { reduceHearts } from '@/actions/user-progress'
-import { useAudio, useWindowSize } from 'react-use'
+import { useAudio, useWindowSize, useMount } from 'react-use'
 import Image from 'next/image'
 import ResultCard from './result-card'
 import { useRouter } from 'next/navigation'
+import { useHeartsModal } from '@/store/use-hearts-modal'
+import { usePracticeModal } from '@/store/use-practice-modal'
 
 type Props = {
   initialPerc: number
@@ -33,6 +35,15 @@ export const Quiz = ({
   initialChallenges,
   userSubscription,
 }: Props) => {
+  const { open: openHeartsModal } = useHeartsModal()
+  const { open: openPracticeModal } = usePracticeModal()
+
+  useMount(() => {
+    if (initialPerc === 100) {
+      openPracticeModal()
+    }
+  })
+
   const { width, height } = useWindowSize()
   const router = useRouter()
   const [finishAudio] = useAudio({
@@ -46,7 +57,9 @@ export const Quiz = ({
   const [pending, startTransition] = useTransition()
   const [lessonId] = useState(initialId)
   const [hearts, setHearts] = useState(initialHearts)
-  const [percentage, setPercentage] = useState(initialPerc)
+  const [percentage, setPercentage] = useState(() => {
+    return initialPerc === 100 ? 0 : initialPerc
+  })
   const [challenges] = useState(initialChallenges)
   const [activeIndex, setActiveIndex] = useState(() => {
     const uncompletedIndex = challenges.findIndex(
@@ -111,7 +124,7 @@ export const Quiz = ({
         reduceHearts(challenge.id)
           .then((response) => {
             if (response?.error === 'hearts') {
-              console.error('Missing hearts')
+              openHeartsModal()
               return
             }
             incorrectControls.play()
