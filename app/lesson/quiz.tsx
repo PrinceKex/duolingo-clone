@@ -1,6 +1,6 @@
 'use client'
 
-import { challengeOptions, challenges } from '@/db/schema'
+import { challengeOptions, challenges, userSubscription } from '@/db/schema'
 import { useState, useTransition } from 'react'
 import Confetti from 'react-confetti'
 import { Header } from './header'
@@ -25,7 +25,11 @@ type Props = {
     completed: boolean
     challengeOptions: (typeof challengeOptions.$inferSelect)[]
   })[]
-  userSubscription: any //TODO: Replace with sub db type
+  userSubscription:
+    | (typeof userSubscription.$inferSelect & {
+        isActive: boolean
+      })
+    | null //TODO: Replace with sub db type
 }
 
 export const Quiz = ({
